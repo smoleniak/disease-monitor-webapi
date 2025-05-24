@@ -1,0 +1,366 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Disease Monitor management for Web-In-Cloud system
+  version: "1.0.0"
+  title: Disease Monitor Api
+  contact:
+    email: xsmoleniak@stuba.sk
+  license:
+    name: CC BY 4.0
+    url: "https://creativecommons.org/licenses/by/4.0/"
+tags:
+- name: diseaseMonitorCases
+  description: Disease Monitor - Disease cases API
+- name: diseaseTypes
+  description: Disease types reported in the Disease Monitor app
+paths:
+  "/disease-monitor/{regionId}/entries":
+    get:
+      tags:
+        - diseaseMonitorCases
+      summary: Provides the disease case entries
+      operationId: getDiseaseCaseEntries
+      description: You get list of existing disease cases
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the geographic region
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: diseaseType
+          description: Optional filter for disease type
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: activeCasesOnly
+          description: Optional filter to return only active (true) cases
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: value of the disease case entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DiseaseCaseEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/DiseaseCaseEntriesExample"
+        "404":
+          description: Region with such ID does not exist
+    post:
+      tags:
+        - diseaseMonitorCases
+      summary: Saves new entry into disease case list
+      operationId: createDiseaseCaseListEntry
+      description: Use this method to store new entry into the disease case list.
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular geographic region
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiseaseCaseEntry"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/DiseaseCaseEntryExample"
+        description: Disease case entry to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of the disease case entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiseaseCaseEntry"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/DiseaseCaseEntryExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Region with such ID does not exists
+        "409":
+          description: Entry with the specified id already exists
+  "/disease-monitor/{regionId}/entries/{entryId}":
+    get:
+      tags:
+        - diseaseMonitorCases
+      summary: Provides details about disase case entry
+      operationId: getDiseaseCaseEntry
+      description: >-
+        By using regionId and entryId you can details of particular entry.
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular geographic region
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the disease case entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiseaseCaseEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/DiseaseCaseEntryExample"
+        "404":
+          description: Region or Entry with such ID does not exist
+    put:
+      tags:
+        - diseaseMonitorCases
+      summary: Updates specific entry
+      operationId: updateDiseaseCaseEntry
+      description: Use this method to update content of the disease case entry.
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular region
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiseaseCaseEntry"
+            examples:
+              request:
+                $ref: "#/components/examples/DiseaseCaseEntryExample"
+        description: disease case entry to update
+        required: true
+      responses:
+        "200":
+          description: >-
+            value of the disease case entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiseaseCaseEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/DiseaseCaseEntryExample"
+        "403":
+          description: >-
+            Value of the entryID and the data id is mismatching. Details are
+            provided in the response body.
+        "404":
+          description: region or Entry with such ID does not exists
+    delete:
+      tags:
+        - diseaseMonitorCases
+      summary: Deletes specific entry
+      operationId: deleteDiseaseCaseEntry
+      description: Use this method to delete the specific entry from the disease case list.
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular region
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the disease cas
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: region or Entry with such ID does not exists
+  "/disease-monitor/{regionId}/disease":
+    get:
+      tags:
+        - diseaseTypes
+      summary: Provides the list of diseases associated with region
+      operationId: getDiseases
+      description: By using regionId you get list of predefined diseases
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular geographic region
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the predefined diseases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Disease"
+              examples:
+                response:
+                  $ref: "#/components/examples/DiseaseListExample"
+        "404":
+          description: Region with such ID does not exist
+components:
+  schemas:
+    DiseaseCaseEntry:
+      type: object
+      required: [id, disease, patient, latitude, longtitude, diseaseStart]
+      properties:
+        id:
+          type: string
+          example: x321ab3
+          description: Unique id of the disease case
+        disease:
+          $ref: "#/components/schemas/Disease"          
+        patient:
+          $ref: "#/components/schemas/Patient"
+        latitude:
+          type: number
+          example: 48.15303
+          description: Geographic latitude
+        longtitude:
+          type: number
+          example: 17.08271
+          description: Geographic longtitude
+        diseaseStart:
+          type: string
+          format: date-time
+          example: "2025-04-18T15:35:00Z"
+          description: Reported time of the disease case.
+        diseaseEnd:
+          type: string
+          format: date-time
+          example: "2025-04-25T15:35:00Z"
+          description: Reported time of disease end.
+      example:
+        $ref: "#/components/examples/DiseaseCaseEntryExample"
+    Disease:
+      description: "Describes disease"
+      required: [value, code]
+      properties:
+        value:
+          type: string
+          example: SARS-CoV-2
+        code:
+          type: string
+          example: covid
+        typicalDurationDays:
+          type: integer
+          format: int32
+          example: 14
+      example:
+        $ref: "#/components/examples/DiseaseExample"
+    Patient:
+      description: "Encapsulates patient entity"
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          example: "p123-jt"
+        name:
+          type: string
+          example: "Jozef Tester"
+      example:
+        $ref: "#/components/examples/PatientExample" 
+  examples:
+    DiseaseCaseEntryExample:
+      summary: Jozef Tester with covid
+      description: |
+        Entry represents a patient with a disease 
+      value:
+        id: x321ab3
+        disease:
+          value: SARS-CoV-2
+          code: covid
+          typicalDurationDays: 14
+        patient: 
+          id: p123-jt
+          name: "Jozef Tester"
+        latitude: 48.15303
+        longtitude: 17.08271
+        diseaseStart: "2025-04-18T15:35:00Z"
+        diseaseEnd: "2025-04-25T15:35:00Z"
+    DiseaseExample:
+      summary: Disease
+      description: disease
+      value:
+        value: SARS-CoV-2
+        code: covid
+        typicalDurationDays: 14
+    PatientExample:
+      summary: Patient
+      description: patient data
+      value:
+        id: p123-jt
+        name: Jozef Tester
+    DiseaseCaseEntriesExample:
+      summary: List of disease cases
+      description: |
+        Example disease case list containing 2 cases
+      value:
+      - id: x321ab3
+        disease:
+          value: SARS-CoV-2
+          code: covid
+          typicalDurationDays: 14
+        patient: 
+          id: p123-jt
+          name: "Jozef Tester"
+        latitude: 48.15303
+        longtitude: 17.08271
+        diseaseStart: "2025-04-18T15:35:00Z"
+        diseaseEnd: "2025-04-25T15:35:00Z"
+      - id: x323fg5
+        disease:
+          value: SLAK
+          code: slintacka-krivacka
+          typicalDurationDays: 8
+        patient: 
+          id: p546-rm
+          name: "Rysuľa Mliečna"
+        latitude: 48.26901
+        longtitude: 17.184580
+        diseaseStart: "2025-04-19T15:35:00Z"
+        diseaseEnd: "2025-04-29T15:35:00Z"
+    DiseaseListExample:
+      summary: Sample of disease types
+      description: |
+        Example list of possible diseases
+      value:
+        - value: SARS-CoV-2
+          code: covid
+          typicalDurationDays: 14
+        - value: SLAK
+          code: slintacka-krivacka
+          typicalDurationDays: 7
+        - value: Malária
+          code: malaria
+          typicalDurationDays: 30
