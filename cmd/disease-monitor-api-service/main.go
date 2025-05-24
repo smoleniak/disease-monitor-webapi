@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/smoleniak/disease-monitor-webapi/api"
+	"github.com/smoleniak/disease-monitor-webapi/internal/disease_monitor"
 )
 
 func main() {
@@ -22,6 +23,11 @@ func main() {
 	engine := gin.New()
 	engine.Use(gin.Recovery())
 	// request routings
+	handleFunctions := &disease_monitor.ApiHandleFunctions{
+		DiseaseTypesAPI:        disease_monitor.NewDiseaseTypesApi(),
+		DiseaseMonitorCasesAPI: disease_monitor.NewDiseaseMonitorCasesApi(),
+	}
+	disease_monitor.NewRouterWithGinEngine(engine, *handleFunctions)
 	engine.GET("/openapi", api.HandleOpenApi)
 	engine.Run(":" + port)
 }
