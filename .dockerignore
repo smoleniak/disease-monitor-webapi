@@ -1,0 +1,5 @@
+internal/disease_monitor/api_*
+internal/disease_monitor/model_*
+internal/disease_monitor/routers.go
+build/
+deployments/
