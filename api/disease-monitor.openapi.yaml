@@ -16,6 +16,8 @@ tags:
   description: Disease Monitor - Disease cases API
 - name: diseaseTypes
   description: Disease types reported in the Disease Monitor app
+- name: regions
+  description: Region details
 paths:
   "/disease-monitor/{regionId}/entries":
     get:
@@ -228,6 +230,57 @@ paths:
                   $ref: "#/components/examples/DiseaseListExample"
         "404":
           description: Region with such ID does not exist
+  "/region":
+    post:
+      tags:
+        - regions
+      summary: Saves new region definition
+      operationId: createRegion
+      description: Use this method to initialize new region in the system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Region"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/RegionExample"
+        description: Region details to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of stored region
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Region"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/RegionExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "409":
+          description: Entry with the specified id already exists
+  "/region/{regionId}":
+    delete:
+      tags:
+        - regions
+      summary: Deletes specific region
+      operationId: deleteRegion
+      description: Use this method to delete the specific region from the system.
+      parameters:
+        - in: path
+          name: regionId
+          description: pass the id of the particular region
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Region with such ID does not exist
 components:
   schemas:
     DiseaseCaseEntry:
@@ -289,7 +342,29 @@ components:
           type: string
           example: "Jozef Tester"
       example:
-        $ref: "#/components/examples/PatientExample" 
+        $ref: "#/components/examples/PatientExample"
+    Region:
+      type: object
+      required: [ "id", "name"]
+      properties:
+        id:
+          type: string
+          example: svk
+          description: Unique identifier of the region
+        name:
+          type: string
+          example: Región Slovenská Republika
+          description: Human readable display name of the region
+        diseaseCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiseaseCaseEntry'
+        predefinedDiseases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Disease'
+      example:
+          $ref: "#/components/examples/RegionExample"
   examples:
     DiseaseCaseEntryExample:
       summary: Jozef Tester with covid
@@ -364,3 +439,45 @@ components:
         - value: Malária
           code: malaria
           typicalDurationDays: 30
+    RegionExample:
+      summary: Sample geographic region
+      description: |
+        Example of geographic region with disease cases and predefined diseases
+      value:
+        id: svk
+        name: Región Slovenská Republika
+        diseaseCases:
+        - id: x321ab3
+          disease:
+            value: SARS-CoV-2
+            code: covid
+            typicalDurationDays: 14
+          patient: 
+            id: p123-jt
+            name: "Jozef Tester"
+          latitude: 48.15303
+          longtitude: 17.08271
+          diseaseStart: "2025-04-18T15:35:00Z"
+          diseaseEnd: "2025-04-25T15:35:00Z"
+        - id: x323fg5
+          disease:
+            value: SLAK
+            code: slintacka-krivacka
+            typicalDurationDays: 8
+          patient: 
+            id: p546-rm
+            name: "Rysuľa Mliečna"
+          latitude: 48.26901
+          longtitude: 17.184580
+          diseaseStart: "2025-04-19T15:35:00Z"
+          diseaseEnd: "2025-04-29T15:35:00Z"
+        predefinedDiseases:
+          - value: SARS-CoV-2
+            code: covid
+            typicalDurationDays: 14
+          - value: SLAK
+            code: slintacka-krivacka
+            typicalDurationDays: 7
+          - value: Malária
+            code: malaria
+            typicalDurationDays: 30

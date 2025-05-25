@@ -67,6 +67,8 @@ type ApiHandleFunctions struct {
 	DiseaseMonitorCasesAPI DiseaseMonitorCasesAPI
 	// Routes for the DiseaseTypesAPI part of the API
 	DiseaseTypesAPI DiseaseTypesAPI
+	// Routes for the RegionsAPI part of the API
+	RegionsAPI RegionsAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
@@ -106,6 +108,18 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			http.MethodGet,
 			"/api/disease-monitor/:regionId/disease",
 			handleFunctions.DiseaseTypesAPI.GetDiseases,
+		},
+		{
+			"CreateRegion",
+			http.MethodPost,
+			"/api/region",
+			handleFunctions.RegionsAPI.CreateRegion,
+		},
+		{
+			"DeleteRegion",
+			http.MethodDelete,
+			"/api/region/:regionId",
+			handleFunctions.RegionsAPI.DeleteRegion,
 		},
 	}
 }

@@ -1,7 +1,9 @@
 internal/disease_monitor/README.md
 internal/disease_monitor/api_disease_monitor_cases.go
 internal/disease_monitor/api_disease_types.go
+internal/disease_monitor/api_regions.go
 internal/disease_monitor/model_disease.go
 internal/disease_monitor/model_disease_case_entry.go
 internal/disease_monitor/model_patient.go
+internal/disease_monitor/model_region.go
 internal/disease_monitor/routers.go

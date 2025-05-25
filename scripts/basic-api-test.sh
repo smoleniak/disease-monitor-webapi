@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{"id":"svk","name":"Región Slovenská Republika","predefinedDiseases": [{"value":"SARS-CoV-19","code":"covid"},{"value":"Slintačka a krívačka","code":"slak"}, {"value": "Malária", "code":"malaria"}]}' http://localhost:8080/api/region

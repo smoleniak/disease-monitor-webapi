@@ -14,5 +14,14 @@ func NewDiseaseTypesApi() DiseaseTypesAPI {
 }
 
 func (o implDiseaseTypesAPI) GetDiseases(c *gin.Context) {
-	c.AbortWithStatus(http.StatusNotImplemented)
+	updateRegionFunc(c, func(
+		c *gin.Context,
+		region *Region,
+	) (updatedRegion *Region, responseContent interface{}, status int) {
+		result := region.PredefinedDiseases
+		if result == nil {
+			result = []Disease{}
+		}
+		return nil, result, http.StatusOK
+	})
 }
