@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ss-disease_monitor-webapi
+  name: ss-disease-monitor-webapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      pod: ss-disease_monitor-webapi-label
+      pod: ss-disease-monitor-webapi-label
   template:
     metadata:
       labels:
-        pod: ss-disease_monitor-webapi-label
+        pod: ss-disease-monitor-webapi-label
     spec:
       volumes:
       - name: init-scripts
@@ -77,12 +77,12 @@ spec:
           - name: DISEASE_MONITOR_API_MONGODB_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: ss-disease_monitor-webapi-config
+                name: ss-disease-monitor-webapi-config
                 key: database
           - name: DISEASE_MONITOR_API_MONGODB_COLLECTION
             valueFrom:
               configMapKeyRef:
-                name: ss-disease_monitor-webapi-config
+                name: ss-disease-monitor-webapi-config
                 key: collection
           - name: DISEASE_MONITOR_API_MONGODB_TIMEOUT_SECONDS
             value: "5"
