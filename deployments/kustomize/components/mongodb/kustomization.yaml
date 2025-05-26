@@ -7,15 +7,15 @@ resources:
 - pvc.yaml
 
 configMapGenerator:
-- name: mongodb-connection
+- name: mongodb-connection-disease-monitor
   options:
     disableNameSuffixHash: true
   literals:
-    - host=mongodb
+    - host=mongodb-disease-monitor
     - port=27017
 
 secretGenerator:
-- name: mongodb-auth
+- name: mongodb-auth-disease-monitor
   options:
     disableNameSuffixHash: true
   literals:

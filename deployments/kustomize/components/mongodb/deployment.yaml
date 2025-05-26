@@ -30,12 +30,12 @@ spec:
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mongodb-auth
+              name: mongodb-auth-disease-monitor
               key: username
         - name: MONGO_INITDB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mongodb-auth
+              name: mongodb-auth-disease-monitor
               key: password
         resources:
           requests:
