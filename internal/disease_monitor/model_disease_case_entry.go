@@ -24,10 +24,10 @@ type DiseaseCaseEntry struct {
 	Patient Patient `json:"patient"`
 
 	// Geographic latitude
-	Latitude float32 `json:"latitude"`
+	Latitude float64 `json:"latitude"`
 
 	// Geographic longtitude
-	Longtitude float32 `json:"longtitude"`
+	Longtitude float64 `json:"longtitude"`
 
 	// Reported time of the disease case.
 	DiseaseStart time.Time `json:"diseaseStart"`
