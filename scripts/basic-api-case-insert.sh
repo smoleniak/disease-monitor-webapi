@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{"id": "x321ab3", "disease": {"value": "SARS-CoV-2", "code": "covid"}, "patient": {"id": "p123-jt", "name": "Jozef Tester"}, "latitude": 48.15303, "longtitude": 17.08271, "diseaseStart": "2025-04-18T15:35:00Z", "diseaseEnd": "2025-04-25T15:35:00Z"}' http://localhost:8080/api/disease-monitor/svk/entries

@@ -95,12 +95,29 @@ func (o implDiseaseMonitorCasesAPI) DeleteDiseaseCaseEntry(c *gin.Context) {
 
 func (o implDiseaseMonitorCasesAPI) GetDiseaseCaseEntries(c *gin.Context) {
 	updateRegionFunc(c, func(c *gin.Context, region *Region) (*Region, interface{}, int) {
-		result := region.DiseaseCases
-		if result == nil {
-			result = []DiseaseCaseEntry{}
+		diseaseType := c.Query("diseaseType")
+		activeOnly := c.Query("activeCasesOnly") == "true"
+
+		var filtered []DiseaseCaseEntry
+		for _, entry := range region.DiseaseCases {
+			// Filter by diseaseType if provided
+			if diseaseType != "" && entry.Disease.Code != diseaseType {
+				continue
+			}
+			// Filter out inactive cases if activeOnly is true
+			if activeOnly && !entry.DiseaseEnd.IsZero() {
+				continue
+			}
+			filtered = append(filtered, entry)
 		}
-		// return nil region - no need to update it in db
-		return nil, result, http.StatusOK
+
+		// Fallback to empty slice if no matches
+		if filtered == nil {
+			filtered = []DiseaseCaseEntry{}
+		}
+
+		// Return filtered data, no need to update region
+		return nil, filtered, http.StatusOK
 	})
 }
 
