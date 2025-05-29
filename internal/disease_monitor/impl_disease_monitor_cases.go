@@ -193,12 +193,24 @@ func (o implDiseaseMonitorCasesAPI) UpdateDiseaseCaseEntry(c *gin.Context) {
 			region.DiseaseCases[entryIndx].Patient.Name = entry.Patient.Name
 		}
 
-		// disease cannot start in the future
-		if entry.DiseaseStart.Before(time.Time{}) {
+		now := time.Now()
+		if !entry.DiseaseStart.IsZero() {
+			if entry.DiseaseStart.After(now) {
+				return nil, gin.H{
+					"status":  http.StatusBadRequest,
+					"message": "Disease cannot start in the future",
+				}, http.StatusBadRequest
+			}
 			region.DiseaseCases[entryIndx].DiseaseStart = entry.DiseaseStart
 		}
 
-		if entry.DiseaseEnd.Before(time.Time{}) {
+		if !entry.DiseaseEnd.IsZero() {
+			if entry.DiseaseEnd.After(now) {
+				return nil, gin.H{
+					"status":  http.StatusBadRequest,
+					"message": "Disease cannot end in the future",
+				}, http.StatusBadRequest
+			}
 			region.DiseaseCases[entryIndx].DiseaseEnd = entry.DiseaseEnd
 		}
 
